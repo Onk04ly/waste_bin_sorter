@@ -239,7 +239,7 @@ def main():
         random_state=42
     )
     
-    print(f"\n✅ Final splits:")
+    print(f"\n Final splits:")
     print(f"Train: {len(train_df)} ({len(train_df)/len(combined_df)*100:.1f}%)")
     print(f"Val:   {len(val_df)} ({len(val_df)/len(combined_df)*100:.1f}%)")
     print(f"Test:  {len(test_df)} ({len(test_df)/len(combined_df)*100:.1f}%)")
@@ -249,7 +249,7 @@ def main():
     val_df.to_csv(loader.processed_dir / 'val.csv', index=False)
     test_df.to_csv(loader.processed_dir / 'test.csv', index=False)
     
-    print(f"\n✅ Data preparation complete!")
+    print(f"\n Data preparation complete!")
     print(f"Metadata saved in {loader.processed_dir}")
     print(f"\nClass mapping: {class_to_idx}")
 
