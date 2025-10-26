@@ -198,25 +198,29 @@ def main():
     """Main execution function."""
     loader = WasteDataLoader()
     
+    # Auto-detect project root directory
+    script_dir = Path(__file__).parent  # src/
+    project_root = script_dir.parent    # project root
+    
     # Scan TRAIN directory
     print("Scanning TRAIN dataset directory...")
-    train_path = 'data/raw/TRAIN'
+    train_path = project_root / 'data' / 'raw' / 'TRAIN'
     
-    if not os.path.exists(train_path):
+    if not train_path.exists():
         print(f"Error: {train_path} not found!")
         return
     
-    train_df = loader.scan_directory_structure(train_path)
+    train_df = loader.scan_directory_structure(str(train_path))
     
     # Scan TEST directory
     print("\nScanning TEST dataset directory...")
-    test_path = 'data/raw/TEST'
+    test_path = project_root / 'data' / 'raw' / 'TEST'
     
-    if not os.path.exists(test_path):
+    if not test_path.exists():
         print(f"Error: {test_path} not found!")
         return
     
-    test_df = loader.scan_directory_structure(test_path)
+    test_df = loader.scan_directory_structure(str(test_path))
     
     # Create class mapping (O=Organic, R=Recyclable)
     # Combine both dataframes to ensure consistent mapping
@@ -226,9 +230,10 @@ def main():
         merge_classes=None  # Keep original O/R classes
     )
     
-    # Split combined data back
-    train_df = combined_df[combined_df['path'].str.contains('/TRAIN/')].reset_index(drop=True)
-    test_df = combined_df[combined_df['path'].str.contains('/TEST/')].reset_index(drop=True)
+    # Split combined data back using platform-independent path matching
+    # Use both forward and backslash to handle Windows paths
+    train_df = combined_df[combined_df['path'].str.contains('[\\\\/]TRAIN[\\\\/]', regex=True)].reset_index(drop=True)
+    test_df = combined_df[combined_df['path'].str.contains('[\\\\/]TEST[\\\\/]', regex=True)].reset_index(drop=True)
     
     # Split TRAIN into train/val (85/15 split since we already have TEST)
     from sklearn.model_selection import train_test_split
